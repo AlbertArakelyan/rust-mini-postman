@@ -60,7 +60,7 @@ async fn make_request() -> Result<String, reqwest::Error> {
     response.text().await
 }
 
-fn quit() -> Result<(), std::error::Error> {
+fn quit() {
     std::process::exit(0);
 }
 
@@ -74,8 +74,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let command = read_command();
 
-        let res = match command {
-            KeyCommand::N => make_request(),
+        match command {
+            KeyCommand::N => {
+                match make_request().await {
+                    Ok(body) => println!("{}", body),
+                    Err(e) => println!("Error: {}", e),
+                }
+            }
             KeyCommand::Q => quit(),
             KeyCommand::Invalid => println!("Invalid command!"),
         };
